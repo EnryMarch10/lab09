@@ -7,6 +7,7 @@ import java.util.List;
  * This is a standard implementation of the calculation.
  * 
  */
+@SuppressWarnings("PMD") // this class was given as done
 public final class MultiThreadedListSumClassic implements SumList {
 
     private final int nthread;
@@ -20,6 +21,7 @@ public final class MultiThreadedListSumClassic implements SumList {
         this.nthread = nthread;
     }
 
+    @SuppressWarnings("CPD-START")
     private static class Worker extends Thread {
         private final List<Integer> list;
         private final int startpos;
@@ -61,7 +63,7 @@ public final class MultiThreadedListSumClassic implements SumList {
         }
 
     }
-
+    @SuppressWarnings("CPD-END")
     @Override
     public long sum(final List<Integer> list) {
         final int size = list.size() % nthread + list.size() / nthread;

@@ -11,6 +11,7 @@ import java.util.List;
  * TestMatrix for worker 1.
  *
  */
+@SuppressWarnings("PMD") // this class was given as done
 public class TestListSumClassic {
 
     /**

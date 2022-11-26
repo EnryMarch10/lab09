@@ -26,12 +26,6 @@ public final class AnotherConcurrentGUI extends JFrame {
     private static final long LIFE_TIME = 10_000L;
     private static final long SECOND = 1000L;
 
-    private void buttonsDisable() {
-        AnotherConcurrentGUI.this.up.setEnabled(false);
-        AnotherConcurrentGUI.this.down.setEnabled(false);
-        AnotherConcurrentGUI.this.wait.setEnabled(false);
-    }
-
     /**
      * Builds a new CGUI.
      */
@@ -47,16 +41,18 @@ public final class AnotherConcurrentGUI extends JFrame {
         panel.add(down);
         panel.add(wait);
         this.getContentPane().add(panel);
-        this.setVisible(true);        
+        this.setVisible(true);
         /*
          * Create the counter agent and start it. This is actually not so good:
          * thread management should be left to
          * java.util.concurrent.ExecutorService
          */
         final Agent agent = new Agent();
+
         wait.addActionListener((e) -> agent.disable());
         up.addActionListener((e) -> agent.up());
         down.addActionListener((e) -> agent.down());
+
         new Thread(agent).start();
         /*
          * Register a listener that stops it
@@ -64,8 +60,8 @@ public final class AnotherConcurrentGUI extends JFrame {
         new Thread(() -> {
             try {
                 Thread.sleep(LIFE_TIME);
-                agent.disable();
-            } catch (InterruptedException e1) {
+                SwingUtilities.invokeAndWait(() -> agent.disable());
+            } catch (InterruptedException | InvocationTargetException e1) {
                 e1.printStackTrace(); // NOPMD
             }
         }).start();
@@ -73,7 +69,7 @@ public final class AnotherConcurrentGUI extends JFrame {
 
     private class Agent implements Runnable {
         private volatile boolean stop;
-        private volatile boolean up;
+        private volatile boolean up = true;
         private int counter;
 
         @Override
@@ -100,11 +96,9 @@ public final class AnotherConcurrentGUI extends JFrame {
          */
         public void disable() {
             this.stop = true;
-            try {
-                SwingUtilities.invokeAndWait(() -> AnotherConcurrentGUI.this.buttonsDisable());
-             } catch (InvocationTargetException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            AnotherConcurrentGUI.this.up.setEnabled(false);
+            AnotherConcurrentGUI.this.down.setEnabled(false);
+            AnotherConcurrentGUI.this.wait.setEnabled(false);
         }
         /**
          * 

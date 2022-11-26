@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
  * This is an implementation using streams.
  * 
  */
+@SuppressWarnings("PMD") // this class was given as done
 public final class MultiThreadedListSumWithStreams implements SumList {
 
     private final int nthread;
